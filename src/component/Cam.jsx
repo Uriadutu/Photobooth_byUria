@@ -23,7 +23,7 @@ const Photobooth = () => {
   const [latestPhoto, setLatestPhoto] = useState(null);
   const [showDate, setShowDate] = useState(false);
   const [showBorder, setShowBorder] = useState(false);
-  const [showText, setShowText] = useState(false)
+  const [showText, setShowText] = useState(false);
   const [textBaru, setTextBaru] = useState("Photobooth");
   const [selectedStickers, setSelectedStickers] = useState([""]);
   const [borderColor, setBorderColor] = useState(textColor);
@@ -160,150 +160,75 @@ const Photobooth = () => {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
-      
+    
+        const paddingRight = 350; // 🔹 Tambahkan padding kanan lebih besar
+        const paddingTop = 30;
         const paddingX = 45;
         const paddingY = 30;
-        const photoWidth = 300; // 🔹 Lebar foto disesuaikan
+        const photoWidth = 300;
         const photoHeight = 250;
         const framePadding = 10;
-        const gapX = 30; // 🔹 Jarak antar kolom
-        const gapY = 20; // 🔹 Jarak antar baris
-        const textHeight = 50; // 🔹 Ruang untuk teks di bawah foto
-        let bottomPadding = 30; // 🔹 Default padding bawah
-      
-        const columns = 2; // 🔹 2 kolom
-        const rows = Math.ceil(photoCount / columns); // 🔹 Hitung jumlah baris
-      
-        // 🔹 Jika jumlah foto GENAP, beri padding bawah lebih besar
+        const gapX = 30;
+        const gapY = 20;
+        let bottomPadding = 30;
+    
+        const columns = 2;
+        const rows = Math.ceil(photoCount / columns);
+    
+        // Jika jumlah foto GENAP, beri padding bawah lebih besar
         if (photoCount % 2 === 0) {
-          bottomPadding = 100; // 🔹 Tambahkan lebih banyak ruang bawah untuk teks
+          bottomPadding = 100;
         }
-      
-        // 🔹 Sesuaikan ukuran canvas
+    
+        // Sesuaikan ukuran canvas
         collageCanvas.width = paddingX * 2 + columns * photoWidth + gapX;
         collageCanvas.height =
-          paddingY + rows * (photoHeight + textHeight + gapY) - gapY + bottomPadding;
-      
+          paddingY +
+          rows * (photoHeight + gapY) - gapY +
+          bottomPadding;
+    
         context.fillStyle = frameColor;
         context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
-      
-        // 🔹 Gambar foto dalam format 2 kolom
+    
+        // Gambar foto dalam format 2 kolom
         photos.forEach((photo, index) => {
           const img = new Image();
           img.src = photo;
           img.onload = () => {
-            const col = index % columns; // 🔹 Menentukan kolom (0 atau 1)
-            const row = Math.floor(index / columns); // 🔹 Menentukan baris
-      
+            const col = index % columns;
+            const row = Math.floor(index / columns);
+    
             const posX = paddingX + col * (photoWidth + gapX);
-            const posY = paddingY + row * (photoHeight + textHeight + gapY);
-      
-            // 🔹 Gambar foto
-            context.drawImage(
-              img,
-              posX,
-              posY,
-              photoWidth,
-              photoHeight - framePadding
-            );
-      
-            // 🔹 Tambahkan border jika `showBorder === true`
+            const posY = paddingY + row * (photoHeight + gapY);
+    
+            // Gambar foto
+            context.drawImage(img, posX, posY, photoWidth, photoHeight - framePadding);
+    
+            // Tambahkan border jika `showBorder === true`
             if (showBorder) {
               context.strokeStyle = borderColor;
               context.lineWidth = 3;
-              context.strokeRect(
-                posX,
-                posY,
-                photoWidth,
-                photoHeight - framePadding
-              );
-            }
-      
-            // 🔹 Tambahkan teks di bawah foto
-            if (index < photoCount) {
-              context.fillStyle = textColor;
-              context.font = "20px cursive";
-              context.textAlign = "center";
-              context.fillText(
-                `Foto ${index + 1}`,
-                posX + photoWidth / 2,
-                posY + photoHeight + 25
-              );
-            }
-      
-            // 🔹 Tambahkan tanggal hanya untuk foto pertama
-            if (showDate && index === 0) {
-              context.fillStyle = textColor;
-              context.font = "18px cursive";
-              context.textAlign = "center";
-              context.fillText(
-                tanggalFormat(new Date().toISOString().split("T")[0]),
-                collageCanvas.width / 2, // 🔹 Pusatkan di atas
-                20
-              );
+              context.strokeRect(posX, posY, photoWidth, photoHeight - framePadding);
             }
           };
         });
-      
-        // 🔹 Tambahkan `textBaru` hanya satu kali
-        if (textBaru) {
-          context.fillStyle = textColor;
-          context.font = "30px cursive";
-          context.textAlign = "center";
-      
-          if (photoCount % 2 !== 0) {
-            // 🔹 Jika jumlah foto GANJIL, letakkan di slot kosong (kanan bawah)
-            const lastRowY =
-              paddingY +
-              Math.floor(photoCount / columns) * (photoHeight + textHeight + gapY);
-            const emptySlotX = paddingX + photoWidth + gapX; // 🔹 Slot kosong di kanan bawah
-      
-            context.fillText(textBaru, emptySlotX + photoWidth / 2, lastRowY + 30);
-          } else {
-            // 🔹 Jika jumlah foto GENAP, letakkan di tengah bawah dengan padding ekstra
-            context.fillText(textBaru, collageCanvas.width / 2, collageCanvas.height - 40);
-          }
-        }
-      }
-      
-      
-    } else if (tataLetak === 2) {
-      if (collageReady) {
-        const collageCanvas = collageRef.current;
-        const context = collageCanvas.getContext("2d");
-      
-        const paddingX = 45;
-        const paddingRight = 350; // 🔹 Tambahkan padding kanan lebih besar
-        const paddingTop = 30;
-        const photoWidth = 400; // 🔹 Lebar foto dikurangi agar ada ruang lebih besar untuk teks
-        const photoHeight = 300;
-        const framePadding = 10;
-        const gapY = 15;
-        const bottomPadding = 30;
-      
-        // 🔹 Lebarkan canvas agar ada lebih banyak ruang di kanan
-        collageCanvas.width = photoWidth + paddingX + paddingRight;
-        collageCanvas.height =
-          paddingTop + photoCount * (photoHeight + gapY) - gapY + bottomPadding;
-      
-        context.fillStyle = frameColor;
-        context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
-      
-        const usedPositions = new Set(); // Simpan posisi stiker yang sudah dipakai
-      
-        // 🔹 Gambar stiker lebih dulu agar z-index lebih rendah
+
+        const usedPositions = new Set(); 
+
         if (selectedStickers.length > 0) {
           let stikerDitempatkan = 0;
           let attempts = 0;
-      
+
           while (stikerDitempatkan < photoCount * 2 && attempts < 20) {
             const randomSticker =
-              selectedStickers[Math.floor(Math.random() * selectedStickers.length)];
+              selectedStickers[
+                Math.floor(Math.random() * selectedStickers.length)
+              ];
             const randomAngle = Math.random() * 60 - 30;
             const randomArea = Math.random();
-      
+
             let stickerX, stickerY;
-      
+
             if (randomArea < 0.25) {
               // Bingkai atas
               stickerX = Math.random() * (collageCanvas.width - 60);
@@ -332,32 +257,156 @@ const Photobooth = () => {
                 Math.random() *
                   (photoCount * (photoHeight + gapY) - gapY + bottomPadding);
             }
-      
+
             const key = `${stickerX},${stickerY}`;
             if (!usedPositions.has(key)) {
               usedPositions.add(key);
-      
+
               context.save();
               context.translate(stickerX + 20, stickerY + 20);
               context.rotate((randomAngle * Math.PI) / 180);
               context.font = "45px Arial"; // Ukuran stiker lebih besar
               context.fillText(randomSticker, -20, 15);
               context.restore();
-      
+
               stikerDitempatkan++;
             }
-      
+
             attempts++;
           }
         }
-      
+    
+        // Tambahkan `textBaru` hanya satu kali
+        if (textBaru && showText) {
+          context.fillStyle = textColor;
+          context.font = "30px cursive";
+          context.textAlign = "center";
+    
+          let textX, textY, dateX, dateY;
+    
+          if (photoCount % 2 !== 0) {
+            // Jika jumlah foto GANJIL, letakkan di tengah slot kosong kanan bawah
+            const lastRowY = paddingY + Math.floor(photoCount / columns) * (photoHeight + gapY);
+            const emptySlotX = paddingX + photoWidth + gapX;
+    
+            // 🔹 Posisi di tengah slot kosong
+            textX = emptySlotX + photoWidth / 2;
+            textY = lastRowY + photoHeight / 2; // Tengah vertikal
+            dateX = textX;
+            dateY = textY + 35; // 🔹 Jarak 35px di bawah textBaru agar tetap dekat
+          } else {
+            // Jika jumlah foto GENAP, letakkan di tengah bawah dengan padding ekstra
+            textX = collageCanvas.width / 2;
+            textY = collageCanvas.height - 60;
+            dateX = textX;
+            dateY = textY + 30; // 🔹 Jarak 30px di bawah textBaru
+          }
+    
+          // Gambar textBaru
+          context.fillText(textBaru, textX, textY);
+    
+          // Tambahkan tanggal di bawah textBaru
+          if (showDate) {
+            context.font = "18px cursive";
+            context.fillText(tanggalFormat(new Date().toISOString().split("T")[0]), dateX, dateY);
+          }
+        }
+      }
+    }
+     else if (tataLetak === 2) {
+      if (collageReady) {
+        const collageCanvas = collageRef.current;
+        const context = collageCanvas.getContext("2d");
+
+        const paddingX = 45;
+        const paddingRight = 350; // 🔹 Tambahkan padding kanan lebih besar
+        const paddingTop = 30;
+        const photoWidth = 400; // 🔹 Lebar foto dikurangi agar ada ruang lebih besar untuk teks
+        const photoHeight = 300;
+        const framePadding = 10;
+        const gapY = 15;
+        const bottomPadding = 30;
+
+        // 🔹 Lebarkan canvas agar ada lebih banyak ruang di kanan
+        collageCanvas.width = photoWidth + paddingX + paddingRight;
+        collageCanvas.height =
+          paddingTop + photoCount * (photoHeight + gapY) - gapY + bottomPadding;
+
+        context.fillStyle = frameColor;
+        context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
+
+        const usedPositions = new Set(); // Simpan posisi stiker yang sudah dipakai
+
+        // 🔹 Gambar stiker lebih dulu agar z-index lebih rendah
+        if (selectedStickers.length > 0) {
+          let stikerDitempatkan = 0;
+          let attempts = 0;
+
+          while (stikerDitempatkan < photoCount * 2 && attempts < 20) {
+            const randomSticker =
+              selectedStickers[
+                Math.floor(Math.random() * selectedStickers.length)
+              ];
+            const randomAngle = Math.random() * 60 - 30;
+            const randomArea = Math.random();
+
+            let stickerX, stickerY;
+
+            if (randomArea < 0.25) {
+              // Bingkai atas
+              stickerX = Math.random() * (collageCanvas.width - 60);
+              stickerY = paddingTop / 2;
+            } else if (randomArea < 0.5) {
+              // Bingkai bawah
+              stickerX = Math.random() * (collageCanvas.width - 60);
+              stickerY =
+                paddingTop +
+                photoCount * (photoHeight + gapY) -
+                gapY +
+                bottomPadding -
+                60;
+            } else if (randomArea < 0.75) {
+              // Bingkai kiri
+              stickerX = 10;
+              stickerY =
+                paddingTop +
+                Math.random() *
+                  (photoCount * (photoHeight + gapY) - gapY + bottomPadding);
+            } else {
+              // Bingkai kanan
+              stickerX = collageCanvas.width - 50;
+              stickerY =
+                paddingTop +
+                Math.random() *
+                  (photoCount * (photoHeight + gapY) - gapY + bottomPadding);
+            }
+
+            const key = `${stickerX},${stickerY}`;
+            if (!usedPositions.has(key)) {
+              usedPositions.add(key);
+
+              context.save();
+              context.translate(stickerX + 20, stickerY + 20);
+              context.rotate((randomAngle * Math.PI) / 180);
+              context.font = "45px Arial"; // Ukuran stiker lebih besar
+              context.fillText(randomSticker, -20, 15);
+              context.restore();
+
+              stikerDitempatkan++;
+            }
+
+            attempts++;
+          }
+        }
+
         // 🔹 Sekarang gambar foto secara vertikal
         photos.forEach((photo, index) => {
           const img = new Image();
           img.src = photo;
           img.onload = () => {
-            const posY = paddingTop + index * (photoHeight + gapY) + framePadding;
-      
+            const posY =
+              paddingTop + index * (photoHeight + gapY) + framePadding;
+
             // 🔹 Gambar foto di kiri
             context.drawImage(
               img,
@@ -366,7 +415,7 @@ const Photobooth = () => {
               photoWidth,
               photoHeight - framePadding
             );
-      
+
             // 🔹 Tambahkan border jika `showBorder === true`
             if (showBorder) {
               context.strokeStyle = borderColor;
@@ -378,7 +427,7 @@ const Photobooth = () => {
                 photoHeight - framePadding
               );
             }
-      
+
             // 🔹 Tambahkan tanggal di kanan atas, sejajar dengan foto pertama
             if (showDate && index === 0) {
               context.fillStyle = textColor;
@@ -386,27 +435,26 @@ const Photobooth = () => {
               context.textAlign = "center";
               context.fillText(
                 tanggalFormat(new Date().toISOString().split("T")[0]),
-                paddingX + photoWidth + (paddingRight / 2), // Geser ke tengah kanan
-              
+                paddingX + photoWidth + paddingRight / 2, // Geser ke tengah kanan
+
                 collageCanvas.height / 2 + 30
               );
             }
           };
         });
-      
+
         // 🔹 Tambahkan teks utama hanya satu kali di tengah kanan
-        if (textBaru) {
+        if (textBaru && showText) {
           context.fillStyle = textColor;
           context.font = "30px cursive";
           context.textAlign = "center";
           context.fillText(
             textBaru,
-            paddingX + photoWidth + (paddingRight / 2), // Pusatkan di kanan
+            paddingX + photoWidth + paddingRight / 2, // Pusatkan di kanan
             collageCanvas.height / 2
           );
         }
       }
-      
     } else if (tataLetak === 3) {
       if (collageReady) {
         const collageCanvas = collageRef.current;
@@ -521,7 +569,7 @@ const Photobooth = () => {
             }
 
             // 🔹 Setelah foto, gambar teks agar z-index lebih tinggi
-            if (textBaru) {
+            if (textBaru && showText) {
               context.fillStyle = textColor;
               context.font = "30px cursive";
               context.textAlign = "center";
@@ -549,7 +597,7 @@ const Photobooth = () => {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
-      
+
         const paddingX = 45;
         const paddingTop = 100; // Tambahkan ruang untuk teks & tanggal di atas
         const photoWidth = 650 - 2 * paddingX;
@@ -557,30 +605,32 @@ const Photobooth = () => {
         const framePadding = 10;
         const bottomPadding = 30; // Kurangi padding bawah karena teks di atas
         const gapY = 10;
-      
+
         // 🔹 Ubah ukuran canvas agar teks dan tanggal di atas mendapatkan ruang
         collageCanvas.width = 640;
         collageCanvas.height =
           paddingTop + photoCount * (photoHeight + gapY) - gapY + bottomPadding;
-      
+
         context.fillStyle = frameColor;
         context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
-      
+
         const usedPositions = new Set(); // Simpan posisi stiker yang sudah dipakai
-      
+
         // 🔹 Gambar stiker lebih dulu agar z-index lebih rendah
         if (selectedStickers.length > 0) {
           let stikerDitempatkan = 0;
           let attempts = 0;
-      
+
           while (stikerDitempatkan < photoCount * 2 && attempts < 20) {
             const randomSticker =
-              selectedStickers[Math.floor(Math.random() * selectedStickers.length)];
+              selectedStickers[
+                Math.floor(Math.random() * selectedStickers.length)
+              ];
             const randomAngle = Math.random() * 60 - 30;
             const randomArea = Math.random();
-      
+
             let stickerX, stickerY;
-      
+
             if (randomArea < 0.25) {
               // Bingkai atas
               stickerX = Math.random() * (collageCanvas.width - 60);
@@ -609,33 +659,33 @@ const Photobooth = () => {
                 Math.random() *
                   (photoCount * (photoHeight + gapY) - gapY + bottomPadding);
             }
-      
+
             const key = `${stickerX},${stickerY}`;
             if (!usedPositions.has(key)) {
               usedPositions.add(key);
-      
+
               context.save();
               context.translate(stickerX + 20, stickerY + 20);
               context.rotate((randomAngle * Math.PI) / 180);
               context.font = "45px Arial"; // Ukuran stiker lebih besar
               context.fillText(randomSticker, -20, 15);
               context.restore();
-      
+
               stikerDitempatkan++;
             }
-      
+
             attempts++;
           }
         }
-      
+
         // 🔹 Tambahkan teks utama di bagian atas
-        if (textBaru) {
+        if (textBaru && showText) {
           context.fillStyle = textColor;
           context.font = "30px cursive";
           context.textAlign = "center";
           context.fillText(textBaru, collageCanvas.width / 2, 50); // Posisi teks lebih tinggi
         }
-      
+
         // 🔹 Tambahkan tanggal di bagian atas
         if (showDate) {
           context.fillStyle = textColor;
@@ -647,7 +697,7 @@ const Photobooth = () => {
             80 // Posisikan di bawah teks utama
           );
         }
-      
+
         // 🔹 Sekarang gambar foto setelah teks di atasnya
         photos.forEach((photo, index) => {
           const img = new Image();
@@ -655,7 +705,7 @@ const Photobooth = () => {
           img.onload = () => {
             const posY =
               paddingTop + index * (photoHeight + gapY) + framePadding;
-      
+
             // Gambar foto
             context.drawImage(
               img,
@@ -664,7 +714,7 @@ const Photobooth = () => {
               photoWidth,
               photoHeight - framePadding
             );
-      
+
             // 🔹 Tambahkan border jika `showBorder === true`
             if (showBorder) {
               context.strokeStyle = borderColor; // Warna border
@@ -679,13 +729,11 @@ const Photobooth = () => {
           };
         });
       }
-      
-      
-    } else if(tataLetak === 5){
+    } else if (tataLetak === 5) {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
-      
+
         const paddingLeft = 350; // 🔹 Perbesar padding kiri untuk teks
         const paddingX = 45;
         const paddingTop = 30;
@@ -694,30 +742,32 @@ const Photobooth = () => {
         const framePadding = 10;
         const gapY = 15;
         const bottomPadding = 30;
-      
+
         // 🔹 Lebarkan canvas agar teks di kiri punya lebih banyak ruang
         collageCanvas.width = paddingLeft + photoWidth + paddingX;
         collageCanvas.height =
           paddingTop + photoCount * (photoHeight + gapY) - gapY + bottomPadding;
-      
+
         context.fillStyle = frameColor;
         context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
-      
+
         const usedPositions = new Set(); // Simpan posisi stiker yang sudah dipakai
-      
+
         // 🔹 Gambar stiker lebih dulu agar z-index lebih rendah
         if (selectedStickers.length > 0) {
           let stikerDitempatkan = 0;
           let attempts = 0;
-      
+
           while (stikerDitempatkan < photoCount * 2 && attempts < 20) {
             const randomSticker =
-              selectedStickers[Math.floor(Math.random() * selectedStickers.length)];
+              selectedStickers[
+                Math.floor(Math.random() * selectedStickers.length)
+              ];
             const randomAngle = Math.random() * 60 - 30;
             const randomArea = Math.random();
-      
+
             let stickerX, stickerY;
-      
+
             if (randomArea < 0.25) {
               // Bingkai atas
               stickerX = Math.random() * (collageCanvas.width - 60);
@@ -746,32 +796,33 @@ const Photobooth = () => {
                 Math.random() *
                   (photoCount * (photoHeight + gapY) - gapY + bottomPadding);
             }
-      
+
             const key = `${stickerX},${stickerY}`;
             if (!usedPositions.has(key)) {
               usedPositions.add(key);
-      
+
               context.save();
               context.translate(stickerX + 20, stickerY + 20);
               context.rotate((randomAngle * Math.PI) / 180);
               context.font = "45px Arial"; // Ukuran stiker lebih besar
               context.fillText(randomSticker, -20, 15);
               context.restore();
-      
+
               stikerDitempatkan++;
             }
-      
+
             attempts++;
           }
         }
-      
+
         // 🔹 Sekarang gambar foto secara vertikal di kanan
         photos.forEach((photo, index) => {
           const img = new Image();
           img.src = photo;
           img.onload = () => {
-            const posY = paddingTop + index * (photoHeight + gapY) + framePadding;
-      
+            const posY =
+              paddingTop + index * (photoHeight + gapY) + framePadding;
+
             // 🔹 Gambar foto di kanan
             context.drawImage(
               img,
@@ -780,7 +831,7 @@ const Photobooth = () => {
               photoWidth,
               photoHeight - framePadding
             );
-      
+
             // 🔹 Tambahkan border jika `showBorder === true`
             if (showBorder) {
               context.strokeStyle = borderColor;
@@ -792,7 +843,7 @@ const Photobooth = () => {
                 photoHeight - framePadding
               );
             }
-      
+
             // 🔹 Tambahkan tanggal di kiri atas, sejajar dengan foto pertama
             if (showDate && index === 0) {
               context.fillStyle = textColor;
@@ -806,9 +857,9 @@ const Photobooth = () => {
             }
           };
         });
-      
+
         // 🔹 Tambahkan teks utama hanya satu kali di tengah kiri
-        if (textBaru) {
+        if (textBaru && showText) {
           context.fillStyle = textColor;
           context.font = "30px cursive";
           context.textAlign = "center";
@@ -819,7 +870,6 @@ const Photobooth = () => {
           );
         }
       }
-      
     } else {
       console.log("tata letak 0");
     }
@@ -830,6 +880,7 @@ const Photobooth = () => {
     borderColor,
     textBaru,
     showDate,
+    showText,
     selectedStickers,
     showBorder,
     tataLetak,
@@ -946,16 +997,7 @@ const Photobooth = () => {
                   className="w-16 h-10 border-2 border-gray-600 rounded-md bg-gray-800 cursor-pointer"
                 />
               </div>
-              <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-                <label className="text-lg">Atur Text</label>
-                <input
-                  type="text"
-                  placeholder="PhotoBooth"
-                  value={textBaru}
-                  onChange={(e) => setTextBaru(e.target.value)}
-                  className="border-2 border-gray-600 rounded-md bg-gray-800 p-2"
-                />
-              </div>
+
               <div className="mt-6 grid grid-cols-2 gap-3 items-center">
                 <label className="text-lg">Pilih Stiker</label>
                 <select
@@ -990,12 +1032,12 @@ const Photobooth = () => {
               <div className="flex gap-2 mt-3">
                 <input
                   type="checkbox"
-                  id="showDate"
+                  id="showText"
                   className="w-4"
                   checked={showText}
                   onChange={() => setShowText(!showText)}
                 />
-                <label htmlFor="showDate">Tampilkan Tanggal</label>
+                <label htmlFor="showText">Tampilkan Text</label>
               </div>
               <div className="flex gap-2 mt-3">
                 <input
@@ -1007,6 +1049,18 @@ const Photobooth = () => {
                 />
                 <label htmlFor="showBorder">Tampilkan Border</label>
               </div>
+              {showText && (
+                <div className="mt-6 grid grid-cols-2 gap-3 items-center">
+                  <label className="text-lg">Atur Text</label>
+                  <input
+                    type="text"
+                    placeholder="PhotoBooth"
+                    value={textBaru}
+                    onChange={(e) => setTextBaru(e.target.value)}
+                    className="border-2 border-gray-600 rounded-md bg-gray-800 p-2"
+                  />
+                </div>
+              )}
               {showBorder && (
                 <div className="mt-6 grid grid-cols-2 gap-3 items-center">
                   <label className="text-lg">Atur Warna Border</label>
