@@ -5,7 +5,7 @@ import b2 from "../img/b2.png";
 import b3 from "../img/b3.png";
 import b4 from "../img/b4.png";
 import b5 from "../img/b5.png";
-import b6 from "../img/b6.png";
+import Mode from "./Mode";
 
 const Photobooth = () => {
   const videoRef = useRef(null);
@@ -58,6 +58,20 @@ const Photobooth = () => {
     "🥵",
     "💋",
   ];
+
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
   const toggleCamera = () => {
     if (stream) {
@@ -160,7 +174,7 @@ const Photobooth = () => {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
-    
+
         const paddingRight = 350; // 🔹 Tambahkan padding kanan lebih besar
         const paddingTop = 30;
         const paddingX = 45;
@@ -171,25 +185,23 @@ const Photobooth = () => {
         const gapX = 30;
         const gapY = 20;
         let bottomPadding = 30;
-    
+
         const columns = 2;
         const rows = Math.ceil(photoCount / columns);
-    
+
         // Jika jumlah foto GENAP, beri padding bawah lebih besar
         if (photoCount % 2 === 0) {
           bottomPadding = 100;
         }
-    
+
         // Sesuaikan ukuran canvas
         collageCanvas.width = paddingX * 2 + columns * photoWidth + gapX;
         collageCanvas.height =
-          paddingY +
-          rows * (photoHeight + gapY) - gapY +
-          bottomPadding;
-    
+          paddingY + rows * (photoHeight + gapY) - gapY + bottomPadding;
+
         context.fillStyle = frameColor;
         context.fillRect(0, 0, collageCanvas.width, collageCanvas.height);
-    
+
         // Gambar foto dalam format 2 kolom
         photos.forEach((photo, index) => {
           const img = new Image();
@@ -197,23 +209,34 @@ const Photobooth = () => {
           img.onload = () => {
             const col = index % columns;
             const row = Math.floor(index / columns);
-    
+
             const posX = paddingX + col * (photoWidth + gapX);
             const posY = paddingY + row * (photoHeight + gapY);
-    
+
             // Gambar foto
-            context.drawImage(img, posX, posY, photoWidth, photoHeight - framePadding);
-    
+            context.drawImage(
+              img,
+              posX,
+              posY,
+              photoWidth,
+              photoHeight - framePadding
+            );
+
             // Tambahkan border jika `showBorder === true`
             if (showBorder) {
               context.strokeStyle = borderColor;
               context.lineWidth = 3;
-              context.strokeRect(posX, posY, photoWidth, photoHeight - framePadding);
+              context.strokeRect(
+                posX,
+                posY,
+                photoWidth,
+                photoHeight - framePadding
+              );
             }
           };
         });
 
-        const usedPositions = new Set(); 
+        const usedPositions = new Set();
 
         if (selectedStickers.length > 0) {
           let stikerDitempatkan = 0;
@@ -275,20 +298,22 @@ const Photobooth = () => {
             attempts++;
           }
         }
-    
+
         // Tambahkan `textBaru` hanya satu kali
         if (textBaru && showText) {
           context.fillStyle = textColor;
           context.font = "30px cursive";
           context.textAlign = "center";
-    
+
           let textX, textY, dateX, dateY;
-    
+
           if (photoCount % 2 !== 0) {
             // Jika jumlah foto GANJIL, letakkan di tengah slot kosong kanan bawah
-            const lastRowY = paddingY + Math.floor(photoCount / columns) * (photoHeight + gapY);
+            const lastRowY =
+              paddingY +
+              Math.floor(photoCount / columns) * (photoHeight + gapY);
             const emptySlotX = paddingX + photoWidth + gapX;
-    
+
             // 🔹 Posisi di tengah slot kosong
             textX = emptySlotX + photoWidth / 2;
             textY = lastRowY + photoHeight / 2; // Tengah vertikal
@@ -301,19 +326,22 @@ const Photobooth = () => {
             dateX = textX;
             dateY = textY + 30; // 🔹 Jarak 30px di bawah textBaru
           }
-    
+
           // Gambar textBaru
           context.fillText(textBaru, textX, textY);
-    
+
           // Tambahkan tanggal di bawah textBaru
           if (showDate) {
             context.font = "18px cursive";
-            context.fillText(tanggalFormat(new Date().toISOString().split("T")[0]), dateX, dateY);
+            context.fillText(
+              tanggalFormat(new Date().toISOString().split("T")[0]),
+              dateX,
+              dateY
+            );
           }
         }
       }
-    }
-     else if (tataLetak === 2) {
+    } else if (tataLetak === 2) {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
@@ -887,21 +915,23 @@ const Photobooth = () => {
   ]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-900 text-white p-6">
+    <div
+      className={`flex flex-col items-center min-h-screen dark:bg-gray-900 dark:text-white transition-colors duration-300`}
+    >
       <h1 className="text-3xl font-bold mb-6 text-center">Photobooth</h1>
 
       {!collageReady && (
         <div className="relative">
-          <div className="border border-gray-700 rounded-lg shadow-lg p-4 bg-gray-800 relative">
+          <div className="border border-gray-300 rounded-lg shadow-md p-4 bg-gray-100 relative">
             <video
               ref={videoRef}
-              className={`w-[640px] h-[480px] rounded-md border-2 border-gray-700 ${
+              className={`w-[640px] h-[480px] rounded-md border-2 border-gray-300 ${
                 isMirrored ? "scale-x-[-1]" : ""
               }`}
               autoPlay
             ></video>
             {countdown !== null && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-6xl font-bold">
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 text-gray-900 text-6xl font-bold">
                 {countdown}
               </div>
             )}
@@ -909,30 +939,39 @@ const Photobooth = () => {
           <div className="flex flex-wrap gap-3 w-full justify-center mt-5 items-center">
             <button
               onClick={toggleCamera}
-              className={`px-4 py-2 font-bold rounded shadow-md ${
+              className={`px-4 py-2 font-bold rounded shadow-md transition ${
                 stream
-                  ? "bg-red-500 hover:bg-red-700"
-                  : "bg-green-500 hover:bg-green-700"
-              } text-white`}
+                  ? "bg-red-500 hover:bg-red-600 text-white"
+                  : "bg-green-500 hover:bg-green-600 text-white"
+              }`}
             >
               {stream ? "Matikan Kamera" : "Aktifkan Kamera"}
             </button>
+            <div className="flex items-center gap-4">
+              Butuh Cahaya?
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className="px-4 py-2 rounded shadow-md border bg-gray-200 dark:bg-gray-700 dark:text-white"
+              >
+                {isDarkMode ? "YA" : "TIDAK"}
+              </button>
+            </div>
             {stream && (
               <button
                 onClick={toggleMirror}
-                className="bg-blue-400 rounded text-white border border-gray-700 py-2 px-3"
+                className="bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 transition"
               >
                 {isMirrored ? "Normal" : "Mirror"}
               </button>
             )}
           </div>
           {latestPhoto && (
-            <div className="mt-6">
-              <p className="text-center text-gray-400">Preview Foto Terbaru</p>
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">Preview Foto Terbaru</p>
               <img
                 src={latestPhoto}
                 alt="Foto Terbaru"
-                className="w-40 h-40 object-cover border-2 border-yellow-500 rounded-md mx-auto"
+                className="w-40 h-40 object-cover border-2 border-yellow-400 rounded-md mx-auto"
               />
             </div>
           )}
@@ -941,18 +980,18 @@ const Photobooth = () => {
 
       {!collageReady && (
         <div className="mt-6 flex flex-col items-center">
-          <label className="mb-2 text-lg">Jumlah Foto:</label>
+          <label className="mb-2 text-lg text-gray-700">Jumlah Foto:</label>
           <input
             type="number"
             min="1"
             value={photoCount}
             onChange={(e) => setPhotoCount(Number(e.target.value))}
-            className="px-4 py-2 rounded border border-gray-600 bg-gray-800 text-white w-20 text-center"
+            className="px-4 py-2 rounded border border-gray-400 bg-gray-100 text-gray-900 w-20 text-center"
           />
           {stream && (
             <button
               onClick={startPhotoCapture}
-              className={`bg-blue-400 rounded text-white border border-gray-700 mt-4 py-2 px-3 ${
+              className={`bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 mt-4 transition ${
                 isCapturing ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isCapturing}
@@ -972,37 +1011,39 @@ const Photobooth = () => {
 
       {collageReady && (
         <>
-          <div className="flex gap-20 mt-10">
-            <div className="">
-              <p className="text-xl font-bold">Preview</p>
-              <canvas ref={collageRef} className=" w-[350px] mt-6"></canvas>
+          <div className="flex gap-10 mt-10">
+            <div>
+              <p className="text-xl font-bold text-gray-800">Preview</p>
+              <canvas
+                ref={collageRef}
+                className="w-[350px] mt-6 border border-gray-300 shadow-md rounded-lg"
+              ></canvas>
             </div>
-            <div className="">
-              <p className="text-xl font-bold">Pengaturan</p>
-              <div className="mt-6 items-center grid grid-cols-2 gap-3">
-                <label className="mb-2 text-lg">Atur Warna Bingkai</label>
+            <div>
+              <p className="text-xl font-bold text-gray-800">Pengaturan</p>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <label className="text-gray-700">Atur Warna Bingkai</label>
                 <input
                   type="color"
                   value={frameColor}
                   onChange={(e) => setFrameColor(e.target.value)}
-                  className="w-16 h-10 border-2 border-gray-600 rounded-md bg-gray-800 cursor-pointer"
+                  className="w-16 h-10 border border-gray-400 rounded-md bg-gray-100 cursor-pointer"
                 />
               </div>
-              <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-                <label className="text-lg">Atur Warna Text</label>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <label className="text-gray-700">Atur Warna Text</label>
                 <input
                   type="color"
                   value={textColor}
                   onChange={(e) => setTextColor(e.target.value)}
-                  className="w-16 h-10 border-2 border-gray-600 rounded-md bg-gray-800 cursor-pointer"
+                  className="w-16 h-10 border border-gray-400 rounded-md bg-gray-100 cursor-pointer"
                 />
               </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-                <label className="text-lg">Pilih Stiker</label>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <label className="text-gray-700">Pilih Stiker</label>
                 <select
                   multiple
-                  className="p-3 bg-gray-800 border border-gray-700 rounded-md text-white"
+                  className="p-2 bg-gray-100 border border-gray-400 rounded-md text-gray-900"
                   onChange={(e) => {
                     const selected = Array.from(
                       e.target.selectedOptions,
@@ -1019,91 +1060,64 @@ const Photobooth = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex gap-2 mt-3">
+              <div className="flex items-center mt-4">
                 <input
                   type="checkbox"
                   id="showDate"
-                  className="w-4"
+                  className="w-4 h-4"
                   checked={showDate}
                   onChange={() => setShowDate(!showDate)}
                 />
-                <label htmlFor="showDate">Tampilkan Tanggal</label>
+                <label htmlFor="showDate" className="ml-2 text-gray-700">
+                  Tampilkan Tanggal
+                </label>
               </div>
-              <div className="flex gap-2 mt-3">
+              <div className="flex items-center mt-4">
                 <input
                   type="checkbox"
                   id="showText"
-                  className="w-4"
+                  className="w-4 h-4"
                   checked={showText}
                   onChange={() => setShowText(!showText)}
                 />
-                <label htmlFor="showText">Tampilkan Text</label>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <input
-                  type="checkbox"
-                  id="showBorder"
-                  className="w-4"
-                  checked={showBorder}
-                  onChange={() => setShowBorder(!showBorder)}
-                />
-                <label htmlFor="showBorder">Tampilkan Border</label>
+                <label htmlFor="showText" className="ml-2 text-gray-700">
+                  Tampilkan Text
+                </label>
               </div>
               {showText && (
-                <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-                  <label className="text-lg">Atur Text</label>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <label className="text-gray-700">Atur Text</label>
                   <input
                     type="text"
                     placeholder="PhotoBooth"
                     value={textBaru}
                     onChange={(e) => setTextBaru(e.target.value)}
-                    className="border-2 border-gray-600 rounded-md bg-gray-800 p-2"
+                    className="border border-gray-400 rounded-md bg-gray-100 p-2"
                   />
                 </div>
               )}
-              {showBorder && (
-                <div className="mt-6 grid grid-cols-2 gap-3 items-center">
-                  <label className="text-lg">Atur Warna Border</label>
-                  <input
-                    type="color"
-                    value={borderColor}
-                    onChange={(e) => setBorderColor(e.target.value)}
-                    className="w-16 h-10 border-2 border-gray-600 rounded-md bg-gray-800 cursor-pointer"
-                  />
-                </div>
-              )}
-              <p>Pilih Tataletak</p>
-              <div className="flex gap-3 bg-white p-2">
-                <button onClick={() => setTataLetak(1)}>
-                  <img className="h-20 w-auto object-contain" src={b1} alt="" />
-                </button>
-                <button onClick={() => setTataLetak(2)}>
-                  <img className="h-20 w-auto object-contain" src={b2} alt="" />
-                </button>
-                <button onClick={() => setTataLetak(3)}>
-                  <img className="h-20 w-auto object-contain" src={b3} alt="" />
-                </button>
-                <button onClick={() => setTataLetak(4)}>
-                  <img className="h-20 w-auto object-contain" src={b4} alt="" />
-                </button>
-                <button onClick={() => setTataLetak(5)}>
-                  <img className="h-20 w-auto object-contain" src={b5} alt="" />
-                </button>
-                {/* <button onClick={() => setTataLetak(6)}>
-                  <img className="h-20 w-auto object-contain" src={b6} alt="" />
-                </button> */}
+              <p className="mt-4 text-gray-700">Pilih Tata Letak</p>
+              <div className="flex gap-3 p-2">
+                {[b1, b2, b3, b4, b5].map((layout, index) => (
+                  <button key={index} onClick={() => setTataLetak(index + 1)}>
+                    <img
+                      className="h-20 w-auto object-contain border border-gray-300 rounded-lg"
+                      src={layout}
+                      alt=""
+                    />
+                  </button>
+                ))}
               </div>
-
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={downloadCollage}
-                  className="bg-blue-400 rounded text-white border border-gray-700 py-2 px-3"
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 transition"
                 >
                   Download Hasil Foto
                 </button>
                 <button
                   onClick={resetCollage}
-                  className="bg-blue-400 rounded text-white border border-gray-700 py-2 px-3"
+                  className="bg-gray-400 hover:bg-gray-500 text-white rounded py-2 px-3 transition"
                 >
                   Ambil Ulang
                 </button>
