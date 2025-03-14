@@ -1045,7 +1045,7 @@ const Photobooth = () => {
                 className="w-[350px] mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
               ></canvas>
             </div>
-            <div className="relative z-50">
+            <div className="relative z-50 bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-900 rounded-lg shadow-lg p-5">
               <p className="text-xl font-bold text-gray-800 dark:text-white">
                 Pengaturan
               </p>
