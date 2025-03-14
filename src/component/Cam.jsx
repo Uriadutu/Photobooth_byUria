@@ -65,10 +65,10 @@ const Photobooth = () => {
 
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "light");
     }
   }, [isDarkMode]);
@@ -158,7 +158,7 @@ const Photobooth = () => {
     if (collageCanvas) {
       const link = document.createElement("a");
       link.href = collageCanvas.toDataURL("image/png");
-      link.download = "@uriadutu_.png";
+      link.download = "tiktok:@uriadutu_.png";
       link.click();
     }
   };
@@ -170,7 +170,7 @@ const Photobooth = () => {
   };
 
   useEffect(() => {
-    if (tataLetak == 1) {
+    if (tataLetak === 1) {
       if (collageReady) {
         const collageCanvas = collageRef.current;
         const context = collageCanvas.getContext("2d");
@@ -916,89 +916,113 @@ const Photobooth = () => {
 
   return (
     <div
-      className={`flex flex-col items-center min-h-screen dark:bg-gray-900 dark:text-white transition-colors duration-300`}
+      className={`flex flex-col items-center mt-0 pt-20 min-h-screen dark:bg-gray-900 dark:text-white transition-colors duration-300`}
     >
+      <div className="absolute w-[500px] h-[300px] bg-purple-300 opacity-30 blur-3xl rounded-full top-10 left-10 md:left-32"></div>
+      <div className="absolute w-[600px] h-[350px] bg-sky-300 opacity-30 blur-3xl rounded-full bottom-10 right-10 md:right-32"></div>
+
       <h1 className="text-3xl font-bold mb-6 text-center">Photobooth</h1>
 
       {!collageReady && (
-        <div className="relative">
-          <div className="border border-gray-300 rounded-lg shadow-md p-4 bg-gray-100 relative">
+        <div className="relative grid grid-cols-2 gap-4">
+          <div className="border border-gray-200 dark:border-gray-600 rounded-lg shadow-md p-3 bg-gray-50 dark:bg-gray-800 relative">
             <video
               ref={videoRef}
-              className={`w-[640px] h-[480px] rounded-md border-2 border-gray-300 ${
+              className={`w-[640px] h-[480px] rounded-md border border-gray-200 dark:border-gray-500 ${
                 isMirrored ? "scale-x-[-1]" : ""
               }`}
               autoPlay
             ></video>
             {countdown !== null && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 text-gray-900 text-6xl font-bold">
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-300 dark:bg-gray-700 bg-opacity-75 text-gray-700 dark:text-white text-5xl font-semibold">
                 {countdown}
               </div>
             )}
-          </div>
-          <div className="flex flex-wrap gap-3 w-full justify-center mt-5 items-center">
-            <button
-              onClick={toggleCamera}
-              className={`px-4 py-2 font-bold rounded shadow-md transition ${
-                stream
-                  ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-green-500 hover:bg-green-600 text-white"
-              }`}
-            >
-              {stream ? "Matikan Kamera" : "Aktifkan Kamera"}
-            </button>
-            <div className="flex items-center gap-4">
-              Butuh Cahaya?
+            <div className="flex items-center gap-4 my-4">
               <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className="px-4 py-2 rounded shadow-md border bg-gray-200 dark:bg-gray-700 dark:text-white"
+                onClick={toggleCamera}
+                className={`px-3 py-2 font-medium rounded shadow-md transition ${
+                  stream
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "bg-green-500 hover:bg-green-600 text-white"
+                }`}
               >
-                {isDarkMode ? "YA" : "TIDAK"}
+                {stream ? "Matikan Kamera" : "Aktifkan Kamera"}
               </button>
+              {stream && (
+                <button
+                  onClick={startPhotoCapture}
+                  className={`bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 transition ${
+                    isCapturing ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  disabled={isCapturing}
+                >
+                  {isCapturing ? "Mengambil Foto..." : "Ambil Foto"}
+                </button>
+              )}
             </div>
-            {stream && (
-              <button
-                onClick={toggleMirror}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 transition"
-              >
-                {isMirrored ? "Normal" : "Mirror"}
-              </button>
-            )}
           </div>
-          {latestPhoto && (
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">Preview Foto Terbaru</p>
-              <img
-                src={latestPhoto}
-                alt="Foto Terbaru"
-                className="w-40 h-40 object-cover border-2 border-yellow-400 rounded-md mx-auto"
+          <div className="w-full max-w-lg bg-white dark:bg-gray-900 rounded-lg shadow-lg p-5">
+            {/* Judul */}
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white text-center mb-6">
+              Pengaturan
+            </h2>
+
+            {/* Baris 1: Cahaya & Mirror */}
+            <div className="space-y-4">
+              {/* Mode Cahaya */}
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700 dark:text-gray-300">Cahaya</span>
+                <button
+                  onClick={() => setIsDarkMode(!isDarkMode)}
+                  className={`relative w-14 h-7 flex items-center rounded-full transition ${
+                    isDarkMode ? "bg-blue-500" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`absolute left-1 w-5 h-5 bg-white rounded-full shadow-md transition ${
+                      isDarkMode ? "translate-x-7" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Tombol Mirror */}
+              {stream && (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Putar Kamera
+                  </span>
+                  <button
+                    onClick={toggleMirror}
+                    className={`relative w-14 h-7 flex items-center rounded-full transition ${
+                      isMirrored ? "bg-blue-500" : "bg-gray-300"
+                    }`}
+                  >
+                    <span
+                      className={`absolute left-1 w-5 h-5 bg-white rounded-full shadow-md transition ${
+                        isMirrored ? "translate-x-7" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Baris 2: Pilih Jumlah Foto */}
+            <div className="mt-6 flex flex-col">
+              <label className="text-gray-700 dark:text-gray-300 mb-2">
+                Pilih Jumlah Foto:
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={photoCount}
+                onChange={(e) => setPhotoCount(Number(e.target.value))}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-center focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
             </div>
-          )}
-        </div>
-      )}
-
-      {!collageReady && (
-        <div className="mt-6 flex flex-col items-center">
-          <label className="mb-2 text-lg text-gray-700">Jumlah Foto:</label>
-          <input
-            type="number"
-            min="1"
-            value={photoCount}
-            onChange={(e) => setPhotoCount(Number(e.target.value))}
-            className="px-4 py-2 rounded border border-gray-400 bg-gray-100 text-gray-900 w-20 text-center"
-          />
-          {stream && (
-            <button
-              onClick={startPhotoCapture}
-              className={`bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 mt-4 transition ${
-                isCapturing ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={isCapturing}
-            >
-              {isCapturing ? "Mengambil Foto..." : "Ambil Foto"}
-            </button>
-          )}
+          </div>
         </div>
       )}
 
@@ -1011,39 +1035,58 @@ const Photobooth = () => {
 
       {collageReady && (
         <>
-          <div className="flex gap-10 mt-10">
+          <div className="flex gap-10 my-6">
             <div>
-              <p className="text-xl font-bold text-gray-800">Preview</p>
+              <p className="text-xl font-bold text-gray-800 dark:text-white">
+                Preview
+              </p>
               <canvas
                 ref={collageRef}
-                className="w-[350px] mt-6 border border-gray-300 shadow-md rounded-lg"
+                className="w-[350px] mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
               ></canvas>
             </div>
             <div>
-              <p className="text-xl font-bold text-gray-800">Pengaturan</p>
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <label className="text-gray-700">Atur Warna Bingkai</label>
+              <p className="text-xl font-bold text-gray-800 dark:text-white">
+                Pengaturan
+              </p>
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <label className="text-gray-700 dark:text-white">
+                  Atur Warna Bingkai
+                </label>
                 <input
                   type="color"
                   value={frameColor}
                   onChange={(e) => setFrameColor(e.target.value)}
-                  className="w-16 h-10 border border-gray-400 rounded-md bg-gray-100 cursor-pointer"
+                  className="w-14 h-10 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 cursor-pointer"
                 />
               </div>
+
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <label className="text-gray-700">Atur Warna Text</label>
+                <label className="text-gray-700 dark:text-white">
+                  Atur Warna Text
+                </label>
                 <input
                   type="color"
                   value={textColor}
                   onChange={(e) => setTextColor(e.target.value)}
-                  className="w-16 h-10 border border-gray-400 rounded-md bg-gray-100 cursor-pointer"
+                  className="w-14 h-10 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 cursor-pointer"
                 />
               </div>
+
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <label className="text-gray-700">Pilih Stiker</label>
+                <div className="relative flex">
+
+                <label className="text-gray-700 dark:text-white">
+                  Pilih Stiker
+                </label>
+                <div className="absolute top-0 right-10 cursor-pointer">
+                  <p  title="Pilih Stiker Bisa lebih dari 1 caranya klik ctrl+click atau shift+click. 1 foto 2 stiker" className="text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-800 rounded-full w-6 h-6 flex items-center justify-center">?</p>
+                </div>
+                </div>
                 <select
                   multiple
-                  className="p-2 bg-gray-100 border border-gray-400 rounded-md text-gray-900"
+                  className="p-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white"
                   onChange={(e) => {
                     const selected = Array.from(
                       e.target.selectedOptions,
@@ -1060,6 +1103,7 @@ const Photobooth = () => {
                   ))}
                 </select>
               </div>
+
               <div className="flex items-center mt-4">
                 <input
                   type="checkbox"
@@ -1068,10 +1112,29 @@ const Photobooth = () => {
                   checked={showDate}
                   onChange={() => setShowDate(!showDate)}
                 />
-                <label htmlFor="showDate" className="ml-2 text-gray-700">
+                <label
+                  htmlFor="showDate"
+                  className="ml-2 text-gray-700 dark:text-white"
+                >
                   Tampilkan Tanggal
                 </label>
               </div>
+              <div className="flex items-center mt-4">
+                <input
+                  type="checkbox"
+                  id="borderColor"
+                  className="w-4 h-4"
+                  checked={showBorder}
+                  onChange={() => setShowBorder(!showBorder)}
+                />
+                <label
+                  htmlFor="borderColor"
+                  className="ml-2 text-gray-700 dark:text-white"
+                >
+                  Tampilkan Border
+                </label>
+              </div>
+
               <div className="flex items-center mt-4">
                 <input
                   type="checkbox"
@@ -1080,34 +1143,58 @@ const Photobooth = () => {
                   checked={showText}
                   onChange={() => setShowText(!showText)}
                 />
-                <label htmlFor="showText" className="ml-2 text-gray-700">
+                <label
+                  htmlFor="showText"
+                  className="ml-2 text-gray-700 dark:text-white"
+                >
                   Tampilkan Text
                 </label>
               </div>
+
               {showText && (
                 <div className="mt-4 grid grid-cols-2 gap-3">
-                  <label className="text-gray-700">Atur Text</label>
+                  <label className="text-gray-700 dark:text-white">
+                    Atur Text
+                  </label>
                   <input
                     type="text"
                     placeholder="PhotoBooth"
                     value={textBaru}
                     onChange={(e) => setTextBaru(e.target.value)}
-                    className="border border-gray-400 rounded-md bg-gray-100 p-2"
+                    className="border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 p-2 text-gray-900 dark:text-white"
                   />
                 </div>
               )}
-              <p className="mt-4 text-gray-700">Pilih Tata Letak</p>
+              {showBorder && (
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <label className="text-gray-700 dark:text-white">
+                    Atur Warnah Border
+                  </label>
+                  <input
+                    type="color"
+                    placeholder="PhotoBooth"
+                    value={borderColor}
+                    onChange={(e) => setBorderColor(e.target.value)}
+                    className="w-14 h-10 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 cursor-pointer"
+                    />
+                </div>
+              )}
+
+              <p className="mt-4 text-gray-700 dark:text-white">
+                Pilih Tata Letak
+              </p>
               <div className="flex gap-3 p-2">
                 {[b1, b2, b3, b4, b5].map((layout, index) => (
                   <button key={index} onClick={() => setTataLetak(index + 1)}>
                     <img
-                      className="h-20 w-auto object-contain border border-gray-300 rounded-lg"
+                      className="h-20 w-auto object-contain hover:scale-105 duration-300 border border-gray-200 dark:border-gray-600 rounded-lg"
                       src={layout}
                       alt=""
                     />
                   </button>
                 ))}
               </div>
+
               <div className="mt-6 flex gap-3">
                 <button
                   onClick={downloadCollage}

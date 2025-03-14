@@ -54,10 +54,10 @@ const Navbar = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="hidden md:block px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition"
+            className=" px-6 py-3 bg-blue-500 rounded-full text-white font-semibold border border-gray-300 hover:bg-blue-600 transition"
             onClick={() => navigate("/photobooth")}
           >
-            Mulai
+            Mulai Sekarang
           </motion.button>
 
           {/* Tombol Hamburger */}
