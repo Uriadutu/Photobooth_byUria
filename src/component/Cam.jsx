@@ -1045,7 +1045,7 @@ const Photobooth = () => {
                 className="w-[350px] mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
               ></canvas>
             </div>
-            <div>
+            <div className="relative z-50">
               <p className="text-xl font-bold text-gray-800 dark:text-white">
                 Pengaturan
               </p>
@@ -1195,7 +1195,7 @@ const Photobooth = () => {
                 ))}
               </div>
 
-              <div className="mt-6 flex gap-3">
+              <div className=" z-50 mt-6 flex gap-3">
                 <button
                   onClick={downloadCollage}
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded py-2 px-3 transition"
