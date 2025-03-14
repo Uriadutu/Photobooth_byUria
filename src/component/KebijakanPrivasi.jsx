@@ -46,7 +46,7 @@ const KebijakanPrivasi = () => {
           <p>
             Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, Anda dapat menghubungi kami melalui{" "}
             <a href="mailto:support@photobooth.com" className="text-blue-500 underline">
-              support@photobooth.com
+              balisoan03@gmail.com
             </a>.
           </p>
         </div>
