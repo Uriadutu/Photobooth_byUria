@@ -24,7 +24,7 @@ const Home = () => {
           <span className="text-blue-500">Photobooth</span>
         </h1>
         <p className="text-lg md:text-xl text-gray-600 mb-6 hover:scale-105 transition duration-300">
-          Tangkap foto, buat kolase, dan unduh dalam kualitas terbaik.
+          Tangkap foto, atur tataletak, dan unduh dalam kualitas terbaik.
           Mengabadikan setiap momen dan menjadikannya lebih spesial.
         </p>
 

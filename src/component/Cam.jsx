@@ -57,6 +57,8 @@ const Photobooth = () => {
     "☠️",
     "🥵",
     "💋",
+    "✨",
+    "🪄",
   ];
 
   const [isDarkMode, setIsDarkMode] = useState(
@@ -921,10 +923,8 @@ const Photobooth = () => {
       <div className="absolute w-[500px] h-[300px] bg-purple-300 opacity-30 blur-3xl rounded-full top-10 left-10 md:left-32"></div>
       <div className="absolute w-[600px] h-[350px] bg-sky-300 opacity-30 blur-3xl rounded-full bottom-10 right-10 md:right-32"></div>
 
-      <h1 className="text-3xl font-bold mb-6 text-center">Photobooth</h1>
-
       {!collageReady && (
-        <div className="relative grid grid-cols-2 gap-4">
+        <div className="relative grid mt-6 grid-cols-1 md:grid-cols-2 px-2 md:px-6 gap-4">
           <div className="border border-gray-200 dark:border-gray-600 rounded-lg shadow-md p-3 bg-gray-50 dark:bg-gray-800 relative">
             <video
               ref={videoRef}
@@ -934,7 +934,7 @@ const Photobooth = () => {
               autoPlay
             ></video>
             {countdown !== null && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-300 dark:bg-gray-700 bg-opacity-75 text-gray-700 dark:text-white text-5xl font-semibold">
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-300 dark:bg-gray-700 bg-opacity-75 dark:bg-opacity-75 text-gray-700 dark:text-white text-5xl font-semibold">
                 {countdown}
               </div>
             )}
@@ -1022,6 +1022,14 @@ const Photobooth = () => {
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white text-center focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
             </div>
+            {latestPhoto && (
+              
+              <img
+              src={latestPhoto}
+              alt="foto"
+              className="w-[350px] mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
+              />
+            )}
           </div>
         </div>
       )}
@@ -1076,13 +1084,17 @@ const Photobooth = () => {
 
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div className="relative flex">
-
-                <label className="text-gray-700 dark:text-white">
-                  Pilih Stiker
-                </label>
-                <div className="absolute top-0 right-10 cursor-pointer">
-                  <p  title="Pilih Stiker Bisa lebih dari 1 caranya klik ctrl+click atau shift+click. 1 foto 2 stiker" className="text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-800 rounded-full w-6 h-6 flex items-center justify-center">?</p>
-                </div>
+                  <label className="text-gray-700 dark:text-white">
+                    Pilih Stiker
+                  </label>
+                  <div className="absolute top-0 right-10 cursor-pointer">
+                    <p
+                      title="Pilih Stiker Bisa lebih dari 1 caranya klik ctrl+click atau shift+click. 1 foto 2 stiker"
+                      className="text-gray-700 dark:text-white bg-gray-50 dark:bg-gray-800 rounded-full w-6 h-6 flex items-center justify-center"
+                    >
+                      ?
+                    </p>
+                  </div>
                 </div>
                 <select
                   multiple
@@ -1176,7 +1188,7 @@ const Photobooth = () => {
                     value={borderColor}
                     onChange={(e) => setBorderColor(e.target.value)}
                     className="w-14 h-10 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-800 cursor-pointer"
-                    />
+                  />
                 </div>
               )}
 

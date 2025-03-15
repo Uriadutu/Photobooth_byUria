@@ -5,7 +5,7 @@ const NavbarCam = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-lg shadow-sm z-50">
+    <nav className="fixed top-0 left-0 w-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-lg shadow-sm z-[200]">
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo */}
         <h1
