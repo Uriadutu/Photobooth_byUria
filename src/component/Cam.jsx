@@ -920,7 +920,7 @@ const Photobooth = () => {
     <div
       className={`flex flex-col items-center mt-0 pt-20 min-h-screen dark:bg-gray-900 dark:text-white transition-colors duration-300`}
     >
-      <div className="absolute w-[500px] h-[300px] bg-purple-300 opacity-30 blur-3xl rounded-full top-10 left-10 md:left-32"></div>
+      <div className="fixed w-[500px] h-[300px] bg-purple-300 opacity-30 blur-3xl rounded-full top-10 left-10 md:left-32"></div>
       <div className="absolute w-[600px] h-[350px] bg-sky-300 opacity-30 blur-3xl rounded-full bottom-10 right-10 md:right-32"></div>
 
       {!collageReady && (
@@ -1043,14 +1043,14 @@ const Photobooth = () => {
 
       {collageReady && (
         <>
-          <div className="flex gap-10 my-6">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 my-6 p-5">
+            <div className="relative z-50 bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-900 rounded-lg shadow-lg p-2">
               <p className="text-xl font-bold text-gray-800 dark:text-white">
                 Preview
               </p>
               <canvas
                 ref={collageRef}
-                className="w-[350px] mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
+                className="w-full mt-4 border border-gray-200 dark:border-gray-600 shadow-md rounded-lg"
               ></canvas>
             </div>
             <div className="relative z-50 bg-white border border-gray-200 dark:border-gray-600 dark:bg-gray-900 rounded-lg shadow-lg p-5">
